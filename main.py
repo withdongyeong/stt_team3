@@ -42,6 +42,32 @@ class WindowClass(QMainWindow, form_class) :
         # 작업 경로 label
         self.browseLabel = self.findChild(QLabel, 'browseLabel')
 
+        # 인사 라디오 버튼
+        self.greetingRadioButton = self.findChild(QRadioButton, 'greetingRadioButton')
+        self.greetingRadioButton.setChecked(True)
+        self.greetingRadioButton.setDisabled(True)
+
+        # 사과 라디오 버튼
+        self.apologizeRadioButton = self.findChild(QRadioButton, 'apologizeRadioButton')
+        self.apologizeRadioButton.setDisabled(True)
+
+        # 감사 라디오 버튼
+        self.thankRadioButton = self.findChild(QRadioButton, 'thankRadioButton')
+        self.thankRadioButton.setDisabled(True)
+
+        # 위급 라디오 버튼
+        self.emergencyRadioButton = self.findChild(QRadioButton, 'emergencyRadioButton')
+        self.emergencyRadioButton.setDisabled(True)
+
+        # 날씨 라디오 버튼
+        self.weatherRadioButton = self.findChild(QRadioButton, 'weatherRadioButton')
+        self.weatherRadioButton.setDisabled(True)
+
+        # 저장 버튼
+        self.saveButton = self.findChild(QPushButton, 'saveButton')
+        self.saveButton.clicked.connect(self.save)
+        self.saveButton.setEnabled(False)
+
     # ok 버튼 액션
     def ok(self):
         # config azure stt
@@ -54,10 +80,25 @@ class WindowClass(QMainWindow, form_class) :
             return
         self.soundToTextView.setText("press start and speak")
         self.startButton.setEnabled(True)
+        self.greetingRadioButton.setDisabled(True)
+        self.weatherRadioButton.setDisabled(True)
+        self.thankRadioButton.setDisabled(True)
+        self.apologizeRadioButton.setDisabled(True)
+        self.emergencyRadioButton.setDisabled(True)
 
     # start 버튼 액션
     def start(self):
         self.soundToTextView.setText("Speak now")
+        self.subscriptionKeyEdit.setDisabled(True)
+        self.browseButton.setEnabled(False)
+        self.okButton.setEnabled(False)
+        self.startButton.setEnabled(False)
+        self.stopButton.setEnabled(True)
+        self.greetingRadioButton.setDisabled(True)
+        self.weatherRadioButton.setDisabled(True)
+        self.thankRadioButton.setDisabled(True)
+        self.apologizeRadioButton.setDisabled(True)
+        self.emergencyRadioButton.setDisabled(True)
         try:
             speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config)
             result = speech_recognizer.recognize_once_async().get()
@@ -76,15 +117,25 @@ class WindowClass(QMainWindow, form_class) :
             self.soundToTextView.setText("error occured, check mic is connected")
             return
 
-        self.startButton.setEnabled(False)
-        self.stopButton.setEnabled(True)
-
     # stop 버튼 액션
     def stop(self):
+        self.subscriptionKeyEdit.setDisabled(False)
+        self.browseButton.setEnabled(True)
+        self.okButton.setEnabled(True)
         self.startButton.setEnabled(True)
+        self.greetingRadioButton.setDisabled(False)
+        self.weatherRadioButton.setDisabled(False)
+        self.thankRadioButton.setDisabled(False)
+        self.apologizeRadioButton.setDisabled(False)
+        self.emergencyRadioButton.setDisabled(False)
+        self.saveButton.setEnabled(True)
 
     # browse 버튼 액션
     def browse(self):
+        pass
+
+    # save 버튼 액션
+    def save(self):
         pass
 
 if __name__ == "__main__" :
