@@ -1,0 +1,11 @@
+# pip install -r requirements.txt
+
+# azure
+azure-cognitiveservices-speech
+
+# PyQt5
+pyQt5
+pyQt5-tools
+
+
+
