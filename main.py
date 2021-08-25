@@ -17,6 +17,9 @@ class WindowClass(QMainWindow, form_class) :
         self.done = False
         self.results = []
 
+        # type 체크 상태
+        self.isType = False
+
         # 작업 경로(데이터 저장 위치)
         self.data_root = "."
 
@@ -77,6 +80,31 @@ class WindowClass(QMainWindow, form_class) :
         self.saveButton = self.findChild(QPushButton, 'saveButton')
         self.saveButton.clicked.connect(self.save)
         self.saveButton.setEnabled(False)
+
+        # 타이핑 체크 박스
+        self.typingButton = self.findChild(QCheckBox, 'typing')
+        self.typingButton.clicked.connect(self.type)
+
+    # type 버튼 액션
+    def type(self):
+        if self.typingButton.isChecked():
+            self.isType = True
+            self.saveButton.setEnabled(True)
+            self.soundToTextView.setEnabled(True)
+            self.greetingRadioButton.setDisabled(False)
+            self.apologizeRadioButton.setDisabled(False)
+            self.thankRadioButton.setDisabled(False)
+            self.emergencyRadioButton.setDisabled(False)
+            self.weatherRadioButton.setDisabled(False)
+        else:
+            self.isType = False
+            self.saveButton.setEnabled(False)
+            self.soundToTextView.setEnabled(False)
+            self.greetingRadioButton.setDisabled(True)
+            self.apologizeRadioButton.setDisabled(True)
+            self.thankRadioButton.setDisabled(True)
+            self.emergencyRadioButton.setDisabled(True)
+            self.weatherRadioButton.setDisabled(True)
 
     # ok 버튼 액션
     def ok(self):
@@ -181,6 +209,7 @@ class WindowClass(QMainWindow, form_class) :
 
     # save 버튼 액션
     def save(self):
+        text = self.soundToTextView.toPlainText()
         # 1번부터, 파일명 체크후 중복시 +1번 인덱스 부여해서 데이터 생성
         index = 1
         path = os.path.abspath(self.data_root)
@@ -203,7 +232,7 @@ class WindowClass(QMainWindow, form_class) :
         else:
             label = '4'
         f.write(label + '\n')
-        f.write(self.soundToTextView.toPlainText())
+        f.write(text)
         f.close()
 
 if __name__ == "__main__" :
