@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
+    <width>539</width>
     <height>333</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="startButton">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>70</x>
      <y>290</y>
      <width>93</width>
      <height>28</height>
@@ -29,8 +29,8 @@
   <widget class="QPushButton" name="browseButton">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>70</y>
+     <x>440</x>
+     <y>60</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -39,25 +39,12 @@
     <string>browse</string>
    </property>
   </widget>
-  <widget class="QLabel" name="browseLabel">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>80</y>
-     <width>251</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>current selected path</string>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="subscriptionKeyEdit">
    <property name="geometry">
     <rect>
      <x>90</x>
      <y>20</y>
-     <width>221</width>
+     <width>441</width>
      <height>22</height>
     </rect>
    </property>
@@ -81,7 +68,7 @@
   <widget class="QPushButton" name="stopButton">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>220</x>
      <y>290</y>
      <width>93</width>
      <height>28</height>
@@ -97,10 +84,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>10</x>
      <y>140</y>
-     <width>271</width>
-     <height>111</height>
+     <width>521</width>
+     <height>101</height>
     </rect>
    </property>
    <property name="html">
@@ -114,7 +101,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="okButton">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>220</x>
      <y>110</y>
      <width>93</width>
      <height>28</height>
@@ -140,7 +127,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QRadioButton" name="apologizeRadioButton">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>130</x>
      <y>260</y>
      <width>61</width>
      <height>19</height>
@@ -153,7 +140,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QRadioButton" name="thankRadioButton">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>240</x>
      <y>260</y>
      <width>61</width>
      <height>19</height>
@@ -166,7 +153,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QRadioButton" name="emergencyRadioButton">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>350</x>
      <y>260</y>
      <width>61</width>
      <height>19</height>
@@ -179,7 +166,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QRadioButton" name="weatherRadioButton">
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>470</x>
      <y>260</y>
      <width>61</width>
      <height>19</height>
@@ -192,7 +179,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="saveButton">
    <property name="geometry">
     <rect>
-     <x>240</x>
+     <x>380</x>
      <y>290</y>
      <width>93</width>
      <height>28</height>
@@ -200,6 +187,32 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>save</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>60</y>
+     <width>64</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>SavePath</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="browseEdit">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>50</y>
+     <width>341</width>
+     <height>51</height>
+    </rect>
    </property>
   </widget>
  </widget>

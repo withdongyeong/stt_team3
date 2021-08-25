@@ -1,3 +1,4 @@
+import os.path
 import sys
 import time
 
@@ -15,6 +16,9 @@ class WindowClass(QMainWindow, form_class) :
         # 음성 인식 상태
         self.done = False
         self.results = []
+
+        # 작업 경로(데이터 저장 위치)
+        self.data_root = "."
 
         # 구독 key label
         self.subscriptionKeyLabel = self.findChild(QLabel, 'subscriptionKeyLabel')
@@ -45,7 +49,8 @@ class WindowClass(QMainWindow, form_class) :
         self.browseButton.clicked.connect(self.browse)
 
         # 작업 경로 label
-        self.browseLabel = self.findChild(QLabel, 'browseLabel')
+        self.browseEdit = self.findChild(QTextEdit, 'browseEdit')
+        self.browseEdit.setText(os.path.abspath(self.data_root))
 
         # 인사 라디오 버튼
         self.greetingRadioButton = self.findChild(QRadioButton, 'greetingRadioButton')
@@ -83,7 +88,7 @@ class WindowClass(QMainWindow, form_class) :
         except:
             self.soundToTextView.setText("subscription key is wrong")
             return
-        self.soundToTextView.setText("press start and speak")
+        self.soundToTextView.setText("Press start and speak")
         self.startButton.setEnabled(True)
         self.greetingRadioButton.setDisabled(True)
         self.weatherRadioButton.setDisabled(True)
@@ -164,15 +169,42 @@ class WindowClass(QMainWindow, form_class) :
                 if cancellation_details.reason == speechsdk.CancellationReason.Error:
                     print("Error details {}: {}".format(i, cancellation_details.error_details))
 
-        self.soundToTextView.setText(text)
+        if text == "":
+            self.soundToTextView.setText("Nothing recognized")
+        else:
+            self.soundToTextView.setText(text)
 
     # browse 버튼 액션
     def browse(self):
-        pass
+        self.data_root = QFileDialog.getExistingDirectory(self, 'Open Folder', './')
+        self.browseEdit.setText(self.data_root)
 
     # save 버튼 액션
     def save(self):
-        pass
+        # 1번부터, 파일명 체크후 중복시 +1번 인덱스 부여해서 데이터 생성
+        index = 1
+        path = os.path.abspath(self.data_root)
+        # 인덱스 5자리맞추기, 5자리 넘어갈일 없을듯
+        fname = path + os.path.sep + os.path.basename(path) + "_" +  str(index).zfill(5) + ".txt"
+        while os.path.isfile(fname):
+            index +=1
+            fname = path + os.path.sep + os.path.basename(path) + "_" + str(index).zfill(5) + ".txt"
+
+        f = open(fname, 'w')
+        if self.greetingRadioButton.isChecked():
+            label = '0'
+        elif self.apologizeRadioButton.isChecked():
+            label = '1'
+        elif self.thankRadioButton.isChecked():
+            label = '2'
+        elif self.emergencyRadioButton.isChecked():
+            label = '3'
+        # self.weatherRadioButton.isChecked:
+        else:
+            label = '4'
+        f.write(label + '\n')
+        f.write(self.soundToTextView.toPlainText())
+        f.close()
 
 if __name__ == "__main__" :
 
