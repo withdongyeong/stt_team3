@@ -27,7 +27,7 @@ class textDataset(Dataset):
       text += line
     f.close()
 
-    return text, label
+    return label, text
 
   def __len__(self):
     length = len(self.all_data)
