@@ -1,3 +1,4 @@
+#-* coding:utf-8 -*-
 import os.path
 import sys
 import time
@@ -6,6 +7,8 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5 import QtCore, QtGui, QtWidgets
 import azure.cognitiveservices.speech as speechsdk
+
+print(sys.getdefaultencoding())
 
 # gui 클래스
 form_class = uic.loadUiType("main.ui")[0]
@@ -219,7 +222,7 @@ class WindowClass(QMainWindow, form_class) :
             index +=1
             fname = path + os.path.sep + os.path.basename(path) + "_" + str(index).zfill(5) + ".txt"
 
-        f = open(fname, 'w')
+        f = open(fname, 'w', encoding='UTF-8')
         if self.greetingRadioButton.isChecked():
             label = '0'
         elif self.apologizeRadioButton.isChecked():
@@ -233,6 +236,7 @@ class WindowClass(QMainWindow, form_class) :
             label = '4'
         f.write(label + '\n')
         f.write(text)
+        return
         f.close()
 
 if __name__ == "__main__" :
