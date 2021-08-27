@@ -23,6 +23,9 @@ class Administration(QMainWindow, form_class):
         self.chkBtn = self.findChild(QPushButton, 'chkBtn')
         self.chkBtn.clicked.connect(self.check)
 
+        self.setPathBtn = self.findChild(QPushButton, 'setPathBtn')
+        self.setPathBtn.clicked.connect(self.setTextFilePath)
+
         self.messageShow = self.findChild(QTableWidget, 'messageShow')
         self.messageShow.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
@@ -125,6 +128,43 @@ class Administration(QMainWindow, form_class):
             charset = detect(raw_data)['encoding']
             return charset
         return None
+
+    def setTextFilePath(self):
+        print('set text file path')
+        self.greeting_ment.clear()
+        self.apologize_ment.clear()
+        self.thanks_ment.clear()
+        self.emergency_ment.clear()
+        self.weather_ment.clear()
+
+        data_root = QFileDialog.getExistingDirectory(self, 'Open Folder', './')
+        print(data_root)
+
+        txt_file = [txt for txt in os.listdir(data_root) if txt[-3:] == 'txt' and txt[0] != 'r']
+
+        for txt in txt_file:
+            txt_path = os.path.join(data_root, txt)
+            with open(txt_path, 'r', encoding=self.find_codec(txt_path)) as f:
+                label = f.readline()
+                text = f.readline()
+                label = int(label.strip())
+                text = text.strip()
+                # print(text)
+                # print(label)
+
+                # 0: "인사",1: "감사", 2: "사과",3: "위급", 4: "날씨"
+                if label == 0:
+                    self.greeting_ment[txt] = text
+                elif label == 1:
+                    self.thanks_ment[txt] = text
+                elif label == 2:
+                    self.apologize_ment[txt] = text
+                elif label == 3:
+                    self.emergency_ment[txt] = text
+                elif label == 4:
+                    self.weather_ment[txt] = text
+                else:
+                    print('something is wrong')
 
 if __name__ == '__main__':
     # QApplication : 프로그램을 실행시켜주는 클래스

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>631</width>
-    <height>591</height>
+    <height>785</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="chkBtn">
    <property name="geometry">
     <rect>
-     <x>520</x>
-     <y>14</y>
+     <x>470</x>
+     <y>20</y>
      <width>61</width>
      <height>41</height>
     </rect>
@@ -29,8 +29,8 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>6</y>
+     <x>10</x>
+     <y>10</y>
      <width>441</width>
      <height>61</height>
     </rect>
@@ -79,8 +79,34 @@
      <x>13</x>
      <y>70</y>
      <width>601</width>
-     <height>501</height>
+     <height>651</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="setPathBtn">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>20</y>
+     <width>61</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>경로</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="makeTextBtn">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>730</y>
+     <width>93</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>텍스트 작성</string>
    </property>
   </widget>
  </widget>
