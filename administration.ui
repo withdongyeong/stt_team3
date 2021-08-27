@@ -109,6 +109,19 @@
     <string>텍스트 작성</string>
    </property>
   </widget>
+  <widget class="QLabel" name="showStateLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>740</y>
+     <width>491</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>이 곳은 각 항목의 text file 갯수를 보여준는 곳입니다. </string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
