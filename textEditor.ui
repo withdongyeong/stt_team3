@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>629</width>
-    <height>685</height>
+    <height>782</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,17 +17,17 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>90</y>
+     <y>140</y>
      <width>611</width>
-     <height>521</height>
+     <height>551</height>
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="saveBtn">
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>630</y>
+     <y>740</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -36,11 +36,11 @@
     <string>저장하기</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="cancleBtn">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>630</y>
+     <x>490</x>
+     <y>740</y>
      <width>131</width>
      <height>28</height>
     </rect>
@@ -49,11 +49,11 @@
     <string>취소 및 돌아가기</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="setPathBtn">
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>30</y>
+     <y>10</y>
      <width>111</width>
      <height>41</height>
     </rect>
@@ -62,24 +62,11 @@
     <string>저장 경로 설정</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="pathShowLabel">
    <property name="geometry">
     <rect>
      <x>30</x>
      <y>20</y>
-     <width>91</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;저장 경로&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>40</y>
      <width>441</width>
      <height>31</height>
     </rect>
@@ -87,6 +74,53 @@
    <property name="text">
     <string>TextLabel</string>
    </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>60</y>
+     <width>441</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QRadioButton" name="greetingRadio">
+      <property name="text">
+       <string>인사</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="thanksRadio">
+      <property name="text">
+       <string>감사</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="apologizeRadio">
+      <property name="text">
+       <string>사과</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="emergencyRadio">
+      <property name="text">
+       <string>위급</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="weatherRadio">
+      <property name="text">
+       <string>날씨</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

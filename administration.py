@@ -194,6 +194,45 @@ class TextEditor(QDialog, QWidget, form_text_editor):
     def __init__(self, path):
         super(TextEditor, self).__init__()
         self.setupUi(self)
+        self.save_path = path
+
+        self.show()
+
+        self.setPathBtn = self.findChild(QPushButton, 'setPathBtn')
+        self.setPathBtn.clicked.connect(self.setSavePath)
+
+        self.pathShowLabel = self.findChild(QLabel, 'pathShowLabel')
+        self.pathShowLabel.setText(self.save_path)
+
+        self.greetingRadio = self.findChild(QRadioButton, 'greetingRadio')
+        self.apologizeRadio = self.findChild(QRadioButton, 'apologizeRadio')
+        self.thanksRadio = self.findChild(QRadioButton, 'thanksRadio')
+        self.emergencyRadio = self.findChild(QRadioButton, 'emergencyRadio')
+        self.weatherRadio = self.findChild(QRadioButton, 'weatherRadio')
+
+        self.textEditor = self.findChild(QPlainTextEdit, 'textEditor')
+
+        self.saveBtn = self.findChild(QPushButton, 'saveBtn')
+        self.saveBtn.clicked.connect(self.save)
+
+        self.cancleBtn = self.findChild(QPushButton, 'cancleBtn')
+        self.cancleBtn.clicked.connect(self.cancle)
+
+    def setSavePath(self):
+        print('path is changed')
+        self.save_path = QFileDialog.getExistingDirectory(self, 'Open Folder', self.save_path)
+        self.pathShowLabel.setText(self.save_path)
+
+    def save(self):
+        print('this file is saved')
+        input_text = self.textEditor.toPlainText()
+        print(input_text)
+
+
+    def cancle(self):
+        print('cancle')
+        self.textEditor.clear()
+        self.close()
 
 if __name__ == '__main__':
     # QApplication : 프로그램을 실행시켜주는 클래스
