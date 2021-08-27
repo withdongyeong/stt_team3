@@ -226,6 +226,28 @@ class TextEditor(QDialog, QWidget, form_text_editor):
     def save(self):
         print('this file is saved')
         input_text = self.textEditor.toPlainText()
+
+        # 0: "인사",1: "감사", 2: "사과",3: "위급", 4: "날씨"
+
+        if self.greetingRadio.isChecked():
+            input_text = str(0) + '\n' + input_text
+        elif self.apologizeRadio.isChecked():
+            input_text = str(1) + '\n' + input_text
+        elif self.thanksRadio.isChecked():
+            input_text = str(2) + '\n' + input_text
+        elif self.emergencyRadio.isChecked():
+            input_text = str(3) + '\n' + input_text
+        elif self.weatherRadio.isChecked():
+            input_text = str(4) + '\n' + input_text
+        elif not self.greetingRadio.isChecked() and not self.apologizeRadio.isChecked() and\
+            not self.emergencyRadio.isChecked() and not self.weatherRadio.isChecked():
+            QMessageBox.information(self, '라벨 에러',
+                                    '라벨 에러입니다.\n라디오버튼의 라벨을 눌러세요', QMessageBox.Yes)
+        else:
+            print('Denied')
+
+
+
         print(input_text)
 
 

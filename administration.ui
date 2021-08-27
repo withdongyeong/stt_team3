@@ -44,16 +44,16 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="apologizeRadio">
+     <widget class="QRadioButton" name="thanksRadio">
       <property name="text">
-       <string>사과</string>
+       <string>감사</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="thanksRadio">
+     <widget class="QRadioButton" name="apologizeRadio">
       <property name="text">
-       <string>감사</string>
+       <string>사과</string>
       </property>
      </widget>
     </item>
