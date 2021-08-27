@@ -4,6 +4,7 @@ import string
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
+from PyQt5.QtGui import QFont
 import sys
 import os
 from chardet import detect
@@ -213,6 +214,11 @@ class TextEditor(QDialog, QWidget, form_text_editor):
         self.weatherRadio = self.findChild(QRadioButton, 'weatherRadio')
 
         self.textEditor = self.findChild(QPlainTextEdit, 'textEditor')
+        self.textEditor.setFont(QFont('Ariel', 13))
+        self.textEditor.setPlaceholderText('라벨 표시인 숫자 입력 대신에 편하게 글만 쓰고 저장하세요\n'
+                                           '라벨링 처리를 알아서 해 줍니다\n'
+                                           '그러면 위의 경로로 랜덤한 파일이름으로 저장됩니다.\n'
+                                           '또한 단축키 ctrl + s를 누르면 자동으로 저장됩니다.')
 
         self.saveBtn = self.findChild(QPushButton, 'saveBtn')
         self.saveBtn.clicked.connect(self.save)
@@ -233,6 +239,7 @@ class TextEditor(QDialog, QWidget, form_text_editor):
         if len(input_text) == 0:
             QMessageBox.information(self, '내용 없음',
                                     '내용이 없습니다. 쓰시고 저장해 주세요', QMessageBox.Yes)
+            return
 
         # 0: "인사",1: "감사", 2: "사과",3: "위급", 4: "날씨"
 
@@ -250,12 +257,14 @@ class TextEditor(QDialog, QWidget, form_text_editor):
             not self.emergencyRadio.isChecked() and not self.weatherRadio.isChecked():
             QMessageBox.information(self, '라벨 에러',
                                     '라벨 에러입니다.\n라디오버튼의 라벨을 누르세요', QMessageBox.Yes)
+            return
         else:
             print('Denied')
 
         print(input_text)
 
-        fname = ''.join(random.choices(string.ascii_lowercase, k=8)) + '.txt'
+        #겹치는 일은 없겠지...?
+        fname = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase, k=8)) + '.txt'
         save_path = os.path.join(self.save_path, fname)
         print(save_path)
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>629</width>
-    <height>782</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,15 +19,15 @@
      <x>10</x>
      <y>140</y>
      <width>611</width>
-     <height>551</height>
+     <height>291</height>
     </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="saveBtn">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>740</y>
+     <x>350</x>
+     <y>450</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -39,8 +39,8 @@
   <widget class="QPushButton" name="cancleBtn">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>740</y>
+     <x>470</x>
+     <y>450</y>
      <width>131</width>
      <height>28</height>
     </rect>
@@ -121,19 +121,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>700</y>
-     <width>321</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;파일 이름은 랜덤으로 생성되며&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;위의 경로에 저장됩니다.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
   </widget>
  </widget>
  <resources/>
