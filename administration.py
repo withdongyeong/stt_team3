@@ -1,4 +1,3 @@
-
 # 0: "인사",1: "감사", 2: "사과",3: "위급", 4: "날씨"
 
 from PyQt5.QtWidgets import *
@@ -9,12 +8,14 @@ from chardet import detect
 
 form_class = uic.loadUiType('administration.ui')[0]
 
+
 class Administration(QMainWindow, form_class):
     def __init__(self):
-        super().__init__()
+        super(Administration, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('Administration')
 
-        self.greetingRadio = self.findChild(QRadioButton,'greetingRadio')
+        self.greetingRadio = self.findChild(QRadioButton, 'greetingRadio')
         self.apologizeRadio = self.findChild(QRadioButton, 'apologizeRadio')
         self.thanksRadio = self.findChild(QRadioButton, 'thanksRadio')
         self.emergencyRadio = self.findChild(QRadioButton, 'emergencyRadio')
@@ -25,6 +26,9 @@ class Administration(QMainWindow, form_class):
 
         self.setPathBtn = self.findChild(QPushButton, 'setPathBtn')
         self.setPathBtn.clicked.connect(self.setTextFilePath)
+
+        self.makeTextBtn = self.findChild(QPushButton, 'makeTextBtn')
+        self.makeTextBtn.clicked.connect(self.toTextEditorPage)
 
         self.messageShow = self.findChild(QTableWidget, 'messageShow')
         self.messageShow.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -37,12 +41,12 @@ class Administration(QMainWindow, form_class):
         self.emergency_ment = {}
         self.weather_ment = {}
 
-        present_path = os.path.abspath('.')
-        txt_file = [txt for txt in os.listdir(present_path) if txt[-3:] == 'txt' and txt[0] != 'r']
+        self.data_root = os.path.abspath('.')
+        txt_file = [txt for txt in os.listdir(self.data_root) if txt[-3:] == 'txt' and txt[0] != 'r']
 
         for txt in txt_file:
-            txt_path = os.path.join(present_path, txt)
-            with open(txt_path, 'r', encoding = self.find_codec(txt_path)) as f:
+            txt_path = os.path.join(self.data_root, txt)
+            with open(txt_path, 'r', encoding=self.find_codec(txt_path)) as f:
                 label = f.readline()
                 text = f.readline()
                 label = int(label.strip())
@@ -64,10 +68,7 @@ class Administration(QMainWindow, form_class):
                 else:
                     print('something is wrong')
 
-
-
     def check(self):
-
 
         self.messageShow.setColumnCount(2)
 
@@ -121,7 +122,6 @@ class Administration(QMainWindow, form_class):
 
         self.messageShow.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-
     def find_codec(self, file_path):
 
         '''텍스트 마다 인코딩이 다를 수 있으므로 인코딩을 찾아서 읽게 해 주는 함수'''
@@ -144,18 +144,18 @@ class Administration(QMainWindow, form_class):
         self.emergency_ment.clear()
         self.weather_ment.clear()
 
-        data_root = QFileDialog.getExistingDirectory(self, 'Open Folder', './')
-        print(data_root)
+        self.data_root = QFileDialog.getExistingDirectory(self, 'Open Folder', './')
+        print(self.data_root)
 
         try:
-            txt_file = [txt for txt in os.listdir(data_root) if txt[-3:] == 'txt' and txt[0] != 'r']
+            txt_file = [txt for txt in os.listdir(self.data_root) if txt[-3:] == 'txt']
         except FileNotFoundError:
-            QMessageBox.information(self,'파일 경로 에러',
-                                    '파일 경로 에러입니다.\n폴더에 txt파일만 있는 폴더를 지정해 주세요', QMessageBox.Yes)
+            QMessageBox.information(self, '파일 경로 에러',
+                                    '파일 경로 에러입니다.\n폴더를 txt파일만 있는 폴더를 지정해 주세요', QMessageBox.Yes)
             return
 
         for txt in txt_file:
-            txt_path = os.path.join(data_root, txt)
+            txt_path = os.path.join(self.data_root, txt)
             with open(txt_path, 'r', encoding=self.find_codec(txt_path)) as f:
                 label = f.readline()
                 text = f.readline()
@@ -178,6 +178,22 @@ class Administration(QMainWindow, form_class):
                 else:
                     print('something is wrong')
 
+    def toTextEditorPage(self):
+        print('to text editor')
+        self.hide()
+        text_editor = TextEditor(self.data_root)
+        text_editor.exec_()
+        self.show()
+
+
+form_text_editor = uic.loadUiType('textEditor.ui')[0]
+
+
+class TextEditor(QDialog, QWidget, form_text_editor):
+
+    def __init__(self, path):
+        super(TextEditor, self).__init__()
+        self.setupUi(self)
 
 if __name__ == '__main__':
     # QApplication : 프로그램을 실행시켜주는 클래스
