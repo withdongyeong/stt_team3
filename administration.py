@@ -1,4 +1,6 @@
 # 0: "인사",1: "감사", 2: "사과",3: "위급", 4: "날씨"
+import random
+import string
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -226,6 +228,11 @@ class TextEditor(QDialog, QWidget, form_text_editor):
     def save(self):
         print('this file is saved')
         input_text = self.textEditor.toPlainText()
+        input_text = input_text.strip()
+
+        if len(input_text) == 0:
+            QMessageBox.information(self, '내용 없음',
+                                    '내용이 없습니다. 쓰시고 저장해 주세요', QMessageBox.Yes)
 
         # 0: "인사",1: "감사", 2: "사과",3: "위급", 4: "날씨"
 
@@ -242,13 +249,20 @@ class TextEditor(QDialog, QWidget, form_text_editor):
         elif not self.greetingRadio.isChecked() and not self.apologizeRadio.isChecked() and\
             not self.emergencyRadio.isChecked() and not self.weatherRadio.isChecked():
             QMessageBox.information(self, '라벨 에러',
-                                    '라벨 에러입니다.\n라디오버튼의 라벨을 눌러세요', QMessageBox.Yes)
+                                    '라벨 에러입니다.\n라디오버튼의 라벨을 누르세요', QMessageBox.Yes)
         else:
             print('Denied')
 
-
-
         print(input_text)
+
+        fname = ''.join(random.choices(string.ascii_lowercase, k=8)) + '.txt'
+        save_path = os.path.join(self.save_path, fname)
+        print(save_path)
+
+        f = open(save_path, 'w', encoding='UTF-8')
+        f.write(input_text)
+        f.close()
+        self.textEditor.clear()
 
 
     def cancle(self):
