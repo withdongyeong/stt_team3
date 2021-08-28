@@ -4,7 +4,8 @@ import string
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QKeySequence
+from PyQt5.QtCore import Qt
 import sys
 import os
 from chardet import detect
@@ -225,6 +226,10 @@ class TextEditor(QDialog, QWidget, form_text_editor):
 
         self.cancleBtn = self.findChild(QPushButton, 'cancleBtn')
         self.cancleBtn.clicked.connect(self.cancle)
+
+
+        self.shortCut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
+        self.shortCut.activated.connect(self.save)
 
     def setSavePath(self):
         print('path is changed')
