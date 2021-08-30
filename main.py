@@ -120,9 +120,6 @@ class WindowClass(QMainWindow, form_class) :
         train_dataset, test_dataset = \
             random_split(dataset, [num_train, len(dataset) - num_train])
 
-
-
-        text = self.soundToTextView.setText("안녕??")
         text = self.soundToTextView.toPlainText()
         print(text)
         komoran = Komoran()
@@ -246,7 +243,7 @@ class WindowClass(QMainWindow, form_class) :
         if self.done == True:
             return
         self.done = True
-
+        self.predictButton.setEnabled(True)
         self.subscriptionKeyEdit.setDisabled(False)
         self.browseButton.setEnabled(True)
         self.okButton.setEnabled(True)
