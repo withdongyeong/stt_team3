@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="startButton">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>10</x>
      <y>290</y>
      <width>93</width>
      <height>28</height>
@@ -68,7 +68,7 @@
   <widget class="QPushButton" name="stopButton">
    <property name="geometry">
     <rect>
-     <x>220</x>
+     <x>140</x>
      <y>290</y>
      <width>93</width>
      <height>28</height>
@@ -179,7 +179,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QPushButton" name="saveButton">
    <property name="geometry">
     <rect>
-     <x>380</x>
+     <x>420</x>
      <y>290</y>
      <width>93</width>
      <height>28</height>
@@ -226,6 +226,19 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>타이핑</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="predictButton">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>290</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>predict</string>
    </property>
   </widget>
  </widget>

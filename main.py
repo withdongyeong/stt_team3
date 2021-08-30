@@ -42,6 +42,11 @@ class WindowClass(QMainWindow, form_class) :
         self.stopButton.clicked.connect(self.stop)
         self.stopButton.setEnabled(False)
 
+        # predict 버튼
+        self.predictButton = self.findChild(QPushButton, 'predictButton')
+        self.predictButton.clicked.connect(self.predict)
+        self.predictButton.setEnabled(False)
+
         # okButton
         self.okButton = self.findChild(QPushButton, 'okButton')
         self.okButton.clicked.connect(self.ok)
@@ -88,6 +93,10 @@ class WindowClass(QMainWindow, form_class) :
         self.typingButton = self.findChild(QCheckBox, 'typing')
         self.typingButton.clicked.connect(self.type)
 
+    # predict 버튼 액션
+    def predict(self):
+        pass
+
     # type 버튼 액션
     def type(self):
         if self.typingButton.isChecked():
@@ -120,6 +129,7 @@ class WindowClass(QMainWindow, form_class) :
             self.soundToTextView.setText("subscription key is wrong")
             return
         self.soundToTextView.setText("Press start and speak")
+        self.predictButton.setEnabled(False)
         self.startButton.setEnabled(True)
         self.greetingRadioButton.setDisabled(True)
         self.weatherRadioButton.setDisabled(True)
@@ -204,6 +214,7 @@ class WindowClass(QMainWindow, form_class) :
             self.soundToTextView.setText("Nothing recognized")
         else:
             self.soundToTextView.setText(text)
+
 
     # browse 버튼 액션
     def browse(self):
