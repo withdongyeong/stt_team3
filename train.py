@@ -121,7 +121,7 @@ komoran = Komoran()
 # iterable 객체를 전달받아서 토큰화 시키는 생성자
 def yield_token(data_iter):
     for _, text in data_iter:
-        yield komoran.nouns(text)
+        yield komoran.morphs(text)
 
 # 어휘집 정의
 vocab = build_vocab_from_iterator(yield_token(train_dataset), specials=["<unk>"])
