@@ -71,7 +71,7 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # 데이터셋을 만들고, 학습 및 테스트 데이터셋으로 분리
 # 데이터셋 만들기
-dataPath = "C:/Users/withd/Desktop/Team3/test"
+dataPath = "./conversationSet"
 dataset = customDataset.textDataset(dataPath)
 
 # random_split 함수를 통해 dataset을 비율을 맞춰 2개의 Subset으로 분리함
