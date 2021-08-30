@@ -13,6 +13,7 @@ import random
 from sklearn.model_selection import ShuffleSplit
 from konlpy.tag import Okt, Komoran
 from torchtext.vocab import build_vocab_from_iterator
+import customDataset, nlpModel
 
 # 하이퍼 파라미터 정의
 # 하이퍼 파라미터
@@ -58,7 +59,6 @@ def evaluate(dataloader):
 
 
 # 시드 고정
-from stt_team3 import customDataset, nlpModel
 
 SEED = 5
 # 랜덤함수 시드
