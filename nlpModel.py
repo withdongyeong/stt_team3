@@ -5,7 +5,14 @@ class TextClassificationModel(nn.Module):
     def __init__(self, vocab_size, embed_dim, num_class):
         super(TextClassificationModel, self).__init__()
         self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
-        self.fc = nn.Linear(embed_dim, num_class)
+        self.fc = nn.Linear(embed_dim, 128)
+        self.fc2 = nn.Linear(128, 256)
+        self.fc3 = nn.Linear(256, 8)
+        self.fc4 = nn.Linear(8, num_class)
+        self.dropout = nn.Dropout(0.2)
+        self.batch = nn.BatchNorm1d(256)
+        self.sig = nn.Sigmoid()
+        self.soft = nn.Softmax(1)
         self.init_weights()
 
     def init_weights(self):
@@ -16,4 +23,12 @@ class TextClassificationModel(nn.Module):
 
     def forward(self, text, offsets):
         embedded = self.embedding(text, offsets)
-        return self.fc(embedded)
+        x = self.fc(embedded)
+        x = self.fc2(x)
+        # x = self.dropout(x)
+        # x = self.batch(x)
+        x = self.fc3(x)
+        x = self.fc4(x)
+        # x = self.sig(x)
+        # x = self.soft(x)
+        return x

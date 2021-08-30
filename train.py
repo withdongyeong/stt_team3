@@ -18,8 +18,8 @@ import customDataset, nlpModel
 # 하이퍼 파라미터 정의
 # 하이퍼 파라미터
 BATCH_SIZE = 2
-lr = 0.001
-EPOCHS = 10
+lr = 4
+EPOCHS = 1000
 
 # train 함수 정의
 def train(model, optimizer, dataloader, criterion):
@@ -29,12 +29,13 @@ def train(model, optimizer, dataloader, criterion):
     start_time = time.time()
     for idx, (label, text, offsets) in enumerate(dataloader):
         optimizer.zero_grad()
-        predited_label = model(text, offsets)
-        loss = criterion(predited_label, label)
+        predicted_label = model(text, offsets)
+
+        loss = criterion(predicted_label, label)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.1)
         optimizer.step()
-        total_acc += (predited_label.argmax(1) == label).sum().item()
+        total_acc += (predicted_label.argmax(1) == label).sum().item()
         total_count += label.size(0)
         if idx % log_interval == 0 and idx > 0:
             elapsed = time.time() - start_time
@@ -176,6 +177,10 @@ for epoch in range(1, EPOCHS + 1):
     accu_val = evaluate(dataLoader_test)
     if total_accu is not None and total_accu > accu_val:
       scheduler.step()
+      # save results, after 2 epochs
+      if not os.path.isdir("./runs"):
+          os.makedirs("runs")
+      torch.save(model.state_dict(), "./runs/best" + "_" + "{:.3f}".format(accu_val) + ".pth")
     else:
        total_accu = accu_val
     print('-' * 59)
@@ -199,7 +204,7 @@ def predict(text, text_pipeline):
         # print(text_pipeline(text))
         text = torch.tensor(text_pipeline(text))
         output = model(text, torch.tensor([0]))
-        # print(output)
+        print(output)
         return output.argmax(1).item()
 
 toPredict = [

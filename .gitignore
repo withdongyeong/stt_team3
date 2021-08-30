@@ -3,6 +3,7 @@ venv
 .idea
 __pycache__
 utils
+runs
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows
