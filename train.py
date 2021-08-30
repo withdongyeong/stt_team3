@@ -134,7 +134,7 @@ vocab.set_default_index(vocab["<unk>"])
 # 텍스트처리 파이프라인은
 # 데이터셋 반복자로부터 얻어온 가공되지 않은 문장 데이터를 처리할 떄 사용
 # lambda 함수로 정의되어있어 text_pipeline(x) 와 같이 사용할 수 있음
-text_pipeline = lambda x: vocab(komoran.nouns(x))
+text_pipeline = lambda x: vocab(komoran.morphs(x))
 label_pipeline = lambda x: int(x)
 
 # label 파이프라인은 label을 int label로 변환해줌
@@ -196,21 +196,23 @@ ag_news_label = {
 
 def predict(text, text_pipeline):
     with torch.no_grad():
-        print(text)
-        print(text_pipeline(text))
+        # print(text_pipeline(text))
         text = torch.tensor(text_pipeline(text))
         output = model(text, torch.tensor([0]))
-        print(output)
+        # print(output)
         return output.argmax(1).item()
 
 toPredict = [
-    "날씨",
-    "맞아 날씨",
-    "내일"
+    "안녕하세요",
+    "네 좋은 아침이에요",
+    "좀 있다 비온다던데, 우산 챙겼어요",
+    "아니요, 비 많이 온데요?"
     ]
 
 model = model.to("cpu")
 
 for text in toPredict:
+    print("-"*20)
     print(text)
-    print("This is a %s conversation" %ag_news_label[predict(text, text_pipeline)])
+    print("예측 : %s" %ag_news_label[predict(text, text_pipeline)])
+    print("-" * 20)
