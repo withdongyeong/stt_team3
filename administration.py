@@ -250,9 +250,9 @@ class TextEditor(QDialog, QWidget, form_text_editor):
 
         if self.greetingRadio.isChecked():
             input_text = str(0) + '\n' + input_text
-        elif self.apologizeRadio.isChecked():
-            input_text = str(1) + '\n' + input_text
         elif self.thanksRadio.isChecked():
+            input_text = str(1) + '\n' + input_text
+        elif self.apologizeRadio.isChecked():
             input_text = str(2) + '\n' + input_text
         elif self.emergencyRadio.isChecked():
             input_text = str(3) + '\n' + input_text
