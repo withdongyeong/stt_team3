@@ -158,7 +158,7 @@ class WindowClass(QMainWindow, form_class) :
                 print(output)
                 return output.argmax(1).item()
 
-        print("예측 : %s" % ag_news_label[predict(text, text_pipeline)])
+        self.soundToTextView.setText(text + "\n" + "예측 : %s" % ag_news_label[predict(text, text_pipeline)])
 
     # type 버튼 액션
     def type(self):
