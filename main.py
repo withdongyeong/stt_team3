@@ -1,20 +1,13 @@
 #-* coding:utf-8 -*-
 import os.path
-import random
 import sys
-import time
+import threading
+import wave
 
-import torch
-from konlpy.tag import Komoran
+import pyaudio
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5 import QtCore, QtGui, QtWidgets
 import azure.cognitiveservices.speech as speechsdk
-from torch.utils.data import random_split
-from torchtext.vocab import build_vocab_from_iterator
-
-import customDataset
-import nlpModel
 
 # gui 클래스
 from stt_team3.train import TextClassification
@@ -33,8 +26,8 @@ class WindowClass(QMainWindow, form_class) :
         print("preprocess finished")
 
         # 음성 인식 상태\
-        self.done = False
-        self.results = []
+        self.isRecording = False
+        self.frame = []
 
         # type 체크 상태
         self.isType = False
@@ -160,84 +153,90 @@ class WindowClass(QMainWindow, form_class) :
         self.apologizeRadioButton.setDisabled(True)
         self.emergencyRadioButton.setDisabled(True)
 
+    # 녹음 thread
+    def rec(self):
+        # 초기화
+        self.frame = []
+        while self.isRecording:
+            data = self.stream.read(self.CHUNK)
+            self.frame.append(data)
+
     # start 버튼 액션
     def start(self):
         # 초기화
-        self.done = False
         self.results = []
         self.soundToTextView.setText("Speak now, press stop to recognize")
         self.subscriptionKeyEdit.setDisabled(True)
         self.browseButton.setEnabled(False)
         self.okButton.setEnabled(False)
         self.startButton.setEnabled(False)
-        self.stopButton.setEnabled(True)
         self.greetingRadioButton.setDisabled(True)
         self.weatherRadioButton.setDisabled(True)
         self.thankRadioButton.setDisabled(True)
         self.apologizeRadioButton.setDisabled(True)
         self.emergencyRadioButton.setDisabled(True)
-        try:
-            self.speech_recognizer = speechsdk.SpeechRecognizer(speech_config=self.speech_config)
-            # 콜백과 이벤트 연결
-            # speech_recognizer가 각 상황에 맞춰 콜백을 보낼 건데, 그 콜백이 일어났을 때
-            # 일어날 이벤트를 connect
-            self.speech_recognizer.recognized.connect(self.save_result)
-            self.speech_recognizer.session_stopped.connect(self.stop)
-            self.speech_recognizer.canceled.connect(self.stop)
-            # 식별 시작
-            self.speech_recognizer.start_continuous_recognition()
-        except:
-            self.soundToTextView.setText("error occured, check mic is connected")
-            return
 
-    # 인식 결과 저장
-    def save_result(self, evt):
-        print(evt)
-        self.results.append(evt.result)
+        # 녹음을 위한 pyaudio 사용
+        self.p = pyaudio.PyAudio()
+
+        # 음질 관련 설정
+        self.CHUNK = 1024
+        self.FORMAT = pyaudio.paInt16
+        self.CHANNELS = 1
+        self.RATE = 44100
+
+        self.stream = self.p.open(format=self.FORMAT,
+                        channels=self.CHANNELS,
+                        rate=self.RATE,
+                        input=True,
+                        frames_per_buffer=self.CHUNK)
+        # 녹음 스레드 시작
+        self.isRecording = True
+        self.stream.start_stream()
+        rec_thread = threading.Thread(target=self.rec)
+        rec_thread.start()
+        self.stopButton.setEnabled(True)
 
     # stop 버튼 액션
     def stop(self, evt):
-        # 이 부분이 없으면, stop이 2번 호출됨
-        # 또한 stop 버튼 누르자마자 stop이 안됨
-        # 누르자마자 stop하도록 고치고 싶음
-        if self.done == True:
-            return
-        self.done = True
-        self.predictButton.setEnabled(True)
+        # isRecording이 False가 되면 스레드로 돌아가고있는 녹음 중단
+        self.isRecording = False
+
+        # 녹음 임시 저장
+        audioName = "temp.wav"
+        wf = wave.open(audioName, 'wb')
+        wf.setnchannels(self.CHANNELS)
+        wf.setsampwidth(self.p.get_sample_size(self.FORMAT))
+        wf.setframerate(self.RATE)
+        wf.writeframes(b''.join(self.frame))
+        wf.close()
+
+        # 애저 stt 호출
+        speech_config = speechsdk.SpeechConfig(subscription=self.subscriptionKeyEdit.text(),
+                                               region="koreacentral",
+                                               speech_recognition_language="ko-KR")
+        audio_input = speechsdk.AudioConfig(filename=audioName)
+        speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_input)
+
+        result = speech_recognizer.recognize_once_async().get()
+
+        # 에러 핸들링
+        if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+            self.soundToTextView.setText(result.text)
+        elif result.reason == speechsdk.ResultReason.NoMatch:
+            self.soundToTextView.setText("No speech could be recognized: {}".format(result.no_match_details))
+        elif result.reason == speechsdk.ResultReason.Canceled:
+            cancellation_details = result.cancellation_details
+            self.soundToTextView.setText("Speech Recognition canceled: {}".format(cancellation_details.reason))
+            if cancellation_details.reason == speechsdk.CancellationReason.Error:
+                self.soundToTextView.setText("Error details: {}".format(cancellation_details.error_details))
+
+        # ui 활성화
         self.subscriptionKeyEdit.setDisabled(False)
         self.browseButton.setEnabled(True)
         self.okButton.setEnabled(True)
         self.startButton.setEnabled(True)
-        self.greetingRadioButton.setDisabled(False)
-        self.weatherRadioButton.setDisabled(False)
-        self.thankRadioButton.setDisabled(False)
-        self.apologizeRadioButton.setDisabled(False)
-        self.emergencyRadioButton.setDisabled(False)
-        self.saveButton.setEnabled(True)
-
-        self.speech_recognizer.stop_continuous_recognition()
-        results = self.results
-        text = ""
-        # result에는 인식된 것만 들어가있을 것 같은데, 아닐 경우에 해당 idx 오류 출력
-        # 인식된것만 text에 추가
-        for i, result in enumerate(results):
-            # 정상 인식
-            if result.reason == speechsdk.ResultReason.RecognizedSpeech:
-                text += result.text + "\n"
-            # 에러 케이스
-            elif result.reason == speechsdk.ResultReason.NoMatch:
-                print("No speech could be recognized {}: {}".format(i, result.no_match_details))
-            elif result.reason == speechsdk.ResultReason.Canceled:
-                cancellation_details = result.cancellation_details
-                print("Speech Recognition canceled {}: {}".format(i, cancellation_details.reason))
-                if cancellation_details.reason == speechsdk.CancellationReason.Error:
-                    print("Error details {}: {}".format(i, cancellation_details.error_details))
-
-        if text == "":
-            self.soundToTextView.setText("Nothing recognized")
-        else:
-            self.soundToTextView.setText(text)
-
+        self.predictButton.setEnabled(True)
 
     # browse 버튼 액션
     def browse(self):
