@@ -13,7 +13,7 @@ class TextClassification():
         # 하이퍼 파라미터
         self.BATCH_SIZE = 2
         self.lr = 4
-        self.EPOCHS = 10
+        self.EPOCHS = 100
         # 시드 고정
         SEED = 5
         # 랜덤함수 시드
@@ -45,20 +45,20 @@ class TextClassification():
         optimizer = torch.optim.SGD(self.model.parameters(), lr=self.lr)
         criterion = torch.nn.CrossEntropyLoss()
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
-        total_accu = None
+        best_accu = 0
 
         for epoch in range(1, self.EPOCHS + 1):
             epoch_start_time = time.time()
             self.train_one_epoch(self.model, optimizer, self.dataLoader_train, criterion)
             accu_val = self.evaluate(self.model, criterion, self.dataLoader_test)
-            if total_accu is not None and total_accu > accu_val:
+            if best_accu < accu_val:
                 scheduler.step()
                 # save results, after 2 epochs
                 if not os.path.isdir("./runs"):
                     os.makedirs("runs")
                 torch.save(self.model.state_dict(), "./runs/best" + "_" + "{:.3f}".format(accu_val) + ".pth")
-            else:
-                total_accu = accu_val
+                best_accu = accu_val
+
             print('-' * 59)
             print('| end of epoch {:3d} | time: {:5.2f}s | '
                   'valid accuracy {:8.3f} '.format(epoch,
