@@ -24,6 +24,12 @@ class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
+
+        self.classifier = TextClassification()
+        # 사전 만들기 작업 필요(모델을 불러올 때, 학습 데이터셋에서 만들어진 사전 사이즈를 맞춰줘야함)
+        # 이 부분을 따로 함수로 빼놨으므로, 클래스 생성 후 사전 만들기 함수 호출
+        self.classifier.makeDatasetAndVoc(dataPath="./conversationSet")
+
         # 음성 인식 상태
         self.done = False
         self.results = []
@@ -103,18 +109,13 @@ class WindowClass(QMainWindow, form_class) :
 
     # predict 버튼 액션
     def predict(self):
-        tc = TextClassification()
-        # 사전 만들기 작업 필요(모델을 불러올 때, 학습 데이터셋에서 만들어진 사전 사이즈를 맞춰줘야함)
-        # 이 부분을 따로 함수로 빼놨으므로, 클래스 생성 후 사전 만들기 함수 호출
-        tc.makeDatasetAndVoc(dataPath="./conversationSet")
-
         # 모델 불러오기
-        tc.load_model("./sample_0.893.pth")
+        self.classifier.load_model("./sample_0.893.pth")
 
         # 텍스트 가져오기
         text = self.soundToTextView.toPlainText()
         # 가져온 텍스트로 예측 후 텍스트 뷰에 전달
-        _, predictedLabel = tc.predict(text)
+        _, predictedLabel = self.classifier.predict(text)
         self.soundToTextView.setText(text + "\n" + "예측 : %s" % predictedLabel)
 
     # type 버튼 액션
