@@ -105,7 +105,7 @@ class WindowClass(QMainWindow, form_class) :
     # predict 버튼 액션
     def predict(self):
         # 모델 불러오기
-        self.classifier.load_model("./sample_0.893.pth")
+        self.classifier.load_model("./sample_0.797.pth")
 
         # 텍스트 가져오기
         text = self.soundToTextView.toPlainText()
