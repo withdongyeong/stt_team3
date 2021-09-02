@@ -25,12 +25,14 @@ class WindowClass(QMainWindow, form_class) :
         super().__init__()
         self.setupUi(self)
 
+        print("preprocessing.. making vocabulary set...")
         self.classifier = TextClassification()
         # 사전 만들기 작업 필요(모델을 불러올 때, 학습 데이터셋에서 만들어진 사전 사이즈를 맞춰줘야함)
         # 이 부분을 따로 함수로 빼놨으므로, 클래스 생성 후 사전 만들기 함수 호출
         self.classifier.makeDatasetAndVoc(dataPath="./conversationSet")
+        print("preprocess finished")
 
-        # 음성 인식 상태
+        # 음성 인식 상태\
         self.done = False
         self.results = []
 
