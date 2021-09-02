@@ -192,6 +192,15 @@ class TextClassification():
         text_list = torch.cat(text_list)
         return label_list.to(self.DEVICE), text_list.to(self.DEVICE), offsets.to(self.DEVICE)
 
+    # 다른 곳에서 predict 하기 위해선 load 모델을 선행해야함
+    def load_model(self, path):
+        n_classes = 5
+        vocab_size = len(self.vocab)  # 학습했던 사전 사이즈 같아야 로드 가능
+        embeding_size = 64
+        self.model = nlpModel.TextClassificationModel(vocab_size, embeding_size, n_classes).to(self.DEVICE)
+        self.model.load_state_dict(torch.load(path))
+        self.model.eval()
+
     def predict(self, text):
         model = self.model.to("cpu")
         with torch.no_grad():
