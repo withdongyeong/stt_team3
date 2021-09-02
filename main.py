@@ -16,9 +16,9 @@ from torchtext.vocab import build_vocab_from_iterator
 import customDataset
 import nlpModel
 
-print(sys.getdefaultencoding())
-
 # gui 클래스
+from stt_team3.train import TextClassification
+
 form_class = uic.loadUiType("main.ui")[0]
 class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
@@ -103,62 +103,19 @@ class WindowClass(QMainWindow, form_class) :
 
     # predict 버튼 액션
     def predict(self):
-        # 시드 고정
+        tc = TextClassification()
+        # 사전 만들기 작업 필요(모델을 불러올 때, 학습 데이터셋에서 만들어진 사전 사이즈를 맞춰줘야함)
+        # 이 부분을 따로 함수로 빼놨으므로, 클래스 생성 후 사전 만들기 함수 호출
+        tc.makeDatasetAndVoc(dataPath="./conversationSet")
 
-        SEED = 5
-        # 랜덤함수 시드
-        random.seed(SEED)
-        # 토치 시드
-        torch.manual_seed(SEED)
+        # 모델 불러오기
+        tc.load_model("./sample_0.893.pth")
 
-        # 데이터셋 만들기
-        dataPath = "./conversationSet"
-        dataset = customDataset.textDataset(dataPath)
-
-        # random_split 함수를 통해 dataset을 비율을 맞춰 2개의 Subset으로 분리함
-        num_train = int(len(dataset) * 0.8)
-        train_dataset, test_dataset = \
-            random_split(dataset, [num_train, len(dataset) - num_train])
-
+        # 텍스트 가져오기
         text = self.soundToTextView.toPlainText()
-        print(text)
-        komoran = Komoran()
-
-        def yield_token(data_iter):
-            for _, text in data_iter:
-                yield komoran.morphs(text)
-
-        # 어휘집 정의
-        vocab = build_vocab_from_iterator(yield_token(train_dataset), specials=["<unk>"])
-        vocab.set_default_index(vocab["<unk>"])
-
-        text_pipeline = lambda x: vocab(komoran.morphs(x))
-
-        n_classes = 5
-        vocab_size = 254 # 이거 trainset 기반 숫자 맞춰야함, 따라서 클래스화 시킨 후 값 저장하고 호출해야함
-        embeding_size = 64
-        DEVICE = 'cpu'
-        # 모델 선언
-        model = nlpModel.TextClassificationModel(vocab_size, embeding_size, n_classes).to(DEVICE)
-        model.load_state_dict(torch.load("./sample_0.893.pth"))
-        model.eval()
-        ag_news_label = {
-            0: "인사",
-            1: "감사",
-            2: "사과",
-            3: "위급",
-            4: "날씨"
-        }
-
-        def predict(text, text_pipeline):
-            with torch.no_grad():
-                # print(text_pipeline(text))
-                text = torch.tensor(text_pipeline(text))
-                output = model(text, torch.tensor([0]))
-                print(output)
-                return output.argmax(1).item()
-
-        self.soundToTextView.setText(text + "\n" + "예측 : %s" % ag_news_label[predict(text, text_pipeline)])
+        # 가져온 텍스트로 예측 후 텍스트 뷰에 전달
+        _, predictedLabel = tc.predict(text)
+        self.soundToTextView.setText(text + "\n" + "예측 : %s" % predictedLabel)
 
     # type 버튼 액션
     def type(self):
