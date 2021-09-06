@@ -27,7 +27,7 @@ class TextClassification():
         self.tokenizer = Komoran()
 
         # label 정의
-        self.ag_news_label = {
+        self.ag_text_label = {
             0: "인사",
             1: "감사",
             2: "사과",
@@ -207,7 +207,7 @@ class TextClassification():
             # print(text_pipeline(text))
             text = torch.tensor(self.text_pipeline(text))
             output = model(text, torch.tensor([0]))
-            return output.argmax(1).item(), self.ag_news_label[output.argmax(1).item()]
+            return output.argmax(1).item(), self.ag_text_label[output.argmax(1).item()]
 
 if __name__ == "__main__" :
     test = TextClassification()
