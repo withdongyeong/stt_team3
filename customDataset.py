@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 class textDataset(Dataset):
   def __init__(self, data_dir):
     # 데이터 정의
-    self.all_data = sorted(glob.glob(os.path.join(data_dir, "*", "*.txt")))
+    self.all_data = sorted(glob.glob(os.path.join(data_dir, "*.txt")))
 
   def __getitem__(self, item):
     # 데이터 읽기

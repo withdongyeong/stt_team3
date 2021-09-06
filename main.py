@@ -22,7 +22,7 @@ class WindowClass(QMainWindow, form_class) :
         self.classifier = TextClassification()
         # 사전 만들기 작업 필요(모델을 불러올 때, 학습 데이터셋에서 만들어진 사전 사이즈를 맞춰줘야함)
         # 이 부분을 따로 함수로 빼놨으므로, 클래스 생성 후 사전 만들기 함수 호출
-        self.classifier.makeDatasetAndVoc(dataPath="./conversationSet")
+        self.classifier.makeDatasetAndVoc(dataPath="./augmented")
         print("preprocess finished")
 
         # 음성 인식 상태\
@@ -105,7 +105,7 @@ class WindowClass(QMainWindow, form_class) :
     # predict 버튼 액션
     def predict(self):
         # 모델 불러오기
-        self.classifier.load_model("./sample_0.797.pth")
+        self.classifier.load_model("./sample_0.941.pth")
 
         # 텍스트 가져오기
         text = self.soundToTextView.toPlainText()

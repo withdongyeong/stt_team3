@@ -211,7 +211,7 @@ class TextClassification():
 
 if __name__ == "__main__" :
     test = TextClassification()
-    test.makeDatasetAndVoc(dataPath="./conversationSet")
+    test.makeDatasetAndVoc(dataPath="./augmented")
     test.train()
     # 테스트 예시
     # _, predict = test.predict("안녕하세요")
