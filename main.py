@@ -5,6 +5,8 @@ import threading
 import wave
 
 import pyaudio
+from PyQt5.QtCore import QRect
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import azure.cognitiveservices.speech as speechsdk
@@ -18,6 +20,9 @@ class WindowClass(QMainWindow, form_class) :
         super().__init__()
         self.setupUi(self)
 
+        # title name
+        self.setWindowTitle("Sound to Text 음성 식별")
+
         print("preprocessing.. making vocabulary set...")
         self.classifier = TextClassification()
         # 사전 만들기 작업 필요(모델을 불러올 때, 학습 데이터셋에서 만들어진 사전 사이즈를 맞춰줘야함)
@@ -25,15 +30,29 @@ class WindowClass(QMainWindow, form_class) :
         self.classifier.makeDatasetAndVoc(dataPath="./augmented")
         print("preprocess finished")
 
-        # 음성 인식 상태\
+        # 음성 인식 상태
         self.isRecording = False
         self.frame = []
 
         # type 체크 상태
         self.isType = False
 
-        # 작업 경로(데이터 저장 위치)
-        self.data_root = "."
+        # 로고
+        self.logo = self.findChild(QLabel, 'logo')
+
+        # 작업 경로(weight 파일 위치 입력)
+        self.data_root = "./sample_0.941.pth"
+
+        # 수동 데이터 저장 경로
+        self.save_text = self.findChild(QTextEdit, 'saveTextPath')
+        self.save_text.setEnabled(False)
+        self.save_dir = "./"
+        self.save_text.setText(os.path.abspath(self.save_dir))
+
+        # 수동 데이터 저장 브라우저
+        self.saveBrowseButton = self.findChild(QPushButton, 'saveBrowseButton')
+        self.saveBrowseButton.setEnabled(False)
+        self.saveBrowseButton.clicked.connect(self.saveBrowse)
 
         # 구독 key label
         self.subscriptionKeyLabel = self.findChild(QLabel, 'subscriptionKeyLabel')
@@ -64,11 +83,11 @@ class WindowClass(QMainWindow, form_class) :
         self.soundToTextView = self.findChild(QTextEdit, 'soundToTextView')
         self.soundToTextView.setText("set subscription key")
 
-        # 작업 경로 browse 버튼
+        # weigh path browse 버튼
         self.browseButton = self.findChild(QPushButton, 'browseButton')
         self.browseButton.clicked.connect(self.browse)
 
-        # 작업 경로 label
+        # weight path label
         self.browseEdit = self.findChild(QTextEdit, 'browseEdit')
         self.browseEdit.setText(os.path.abspath(self.data_root))
 
@@ -105,7 +124,7 @@ class WindowClass(QMainWindow, form_class) :
     # predict 버튼 액션
     def predict(self):
         # 모델 불러오기
-        self.classifier.load_model("./sample_0.941.pth")
+        self.classifier.load_model(self.data_root)
 
         # 텍스트 가져오기
         text = self.soundToTextView.toPlainText()
@@ -113,10 +132,20 @@ class WindowClass(QMainWindow, form_class) :
         _, predictedLabel = self.classifier.predict(text)
         self.soundToTextView.setText(text + "\n" + "예측 : %s" % predictedLabel)
 
+    # saveBrowse 버튼 액션
+    def saveBrowse(self):
+        self.save_dir = QFileDialog.getExistingDirectory(self, "save text dir", "./")
+        self.save_text.setText(self.save_dir)
+
     # type 버튼 액션
     def type(self):
         if self.typingButton.isChecked():
             self.isType = True
+            self.saveBrowseButton.setEnabled(True)
+            self.okButton.setEnabled(False)
+            self.startButton.setEnabled(False)
+            self.stopButton.setEnabled(False)
+            self.predictButton.setEnabled(False)
             self.saveButton.setEnabled(True)
             self.soundToTextView.setEnabled(True)
             self.greetingRadioButton.setDisabled(False)
@@ -126,6 +155,8 @@ class WindowClass(QMainWindow, form_class) :
             self.weatherRadioButton.setDisabled(False)
         else:
             self.isType = False
+            self.saveBrowseButton.setEnabled(False)
+            self.okButton.setEnabled(True)
             self.saveButton.setEnabled(False)
             self.soundToTextView.setEnabled(False)
             self.greetingRadioButton.setDisabled(True)
@@ -240,7 +271,10 @@ class WindowClass(QMainWindow, form_class) :
 
     # browse 버튼 액션
     def browse(self):
-        self.data_root = QFileDialog.getExistingDirectory(self, 'Open Folder', './')
+        path = 'pt'
+        filter = 'All pt(*.pt; *.pth);; PT(*.pt);;PTH(*.pth)'
+        filename = QFileDialog.getOpenFileName(self, 'load pth', path, filter)
+        self.data_root = str(filename).split("'")[1]
         self.browseEdit.setText(self.data_root)
 
     # save 버튼 액션
@@ -248,7 +282,7 @@ class WindowClass(QMainWindow, form_class) :
         text = self.soundToTextView.toPlainText()
         # 1번부터, 파일명 체크후 중복시 +1번 인덱스 부여해서 데이터 생성
         index = 1
-        path = os.path.abspath(self.data_root)
+        path = os.path.abspath(self.save_dir)
         # 인덱스 5자리맞추기, 5자리 넘어갈일 없을듯
         fname = path + os.path.sep + os.path.basename(path) + "_" +  str(index).zfill(5) + ".txt"
         while os.path.isfile(fname):
