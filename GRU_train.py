@@ -11,9 +11,9 @@ from konlpy.tag import Komoran
 
 import nlpModel
 
-BATCH_SIZE = 2
+BATCH_SIZE = 3
 lr = 0.001
-EPOCHS = 10
+EPOCHS = 100
 
 SEED = 5
 # 랜덤함수 시드
@@ -65,10 +65,9 @@ label_pipeline = lambda x: int(x)
 def collate_batch(batch):
     label_list, text_list, offsets = [], [], [0]
     for (_label, _text) in batch:
+        print(_text)
         label_list.append(label_pipeline(_label))
         processed_text = torch.tensor(text_pipeline(_text), dtype=torch.int64)
-        print(_text)
-        print(text_pipeline(_text))
         text_list.append(processed_text)
         offsets.append(processed_text.size(0))
     label_list = torch.tensor(label_list, dtype=torch.int64)
@@ -93,93 +92,42 @@ n_classes = 5
 vocab_size = len(vocab)
 embeding_size = 64
 
-# 모델 선언
-model = nlpModel.TextClassificationModel(vocab_size,embeding_size, n_classes).to(DEVICE)
+model = nlpModel.BasicGRU(
+    vocab_size= vocab_size,
+    batch_size=BATCH_SIZE,
+    embedding_dimension=embeding_size,
+    hidden_size=128,
+    n_layers=2,
+    device=DEVICE,
+    n_classes=n_classes
+)
 optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 criterion = torch.nn.CrossEntropyLoss()
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 0.1, gamma=0.1)
 total_accu = None
 
+
 def train(model, optimizer, dataloader, criterion):
+    model.to(DEVICE)
     model.train()
     total_acc, total_count = 0, 0
     log_interval = 500
     start_time = time.time()
+
     for idx, (label, text, offsets) in enumerate(dataloader):
         optimizer.zero_grad()
         predicted_label = model(text, offsets)
-        loss = criterion(predicted_label, label)
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.1)
-        optimizer.step()
-        total_acc += (predicted_label.argmax(1) == label).sum().item()
-        total_count += label.size()[0]
-        if idx % log_interval == 0 and idx > 0:
-            elapsed = time.time() - start_time
-            print('| epoch {:3d} | {:5d}/{:5d} batches '
-                  '| accuracy {:8.3f}'.format(EPOCHS, idx, len(dataloader),
-                                              total_acc / total_count))
-            total_acc, total_count = 0, 0
-            start_time = time.time()
-            exit()
-
-
+        exit()
+        # print(label)
+        # print(text)
+        # # print(offsets)
+        # predicted_label = model(text, offsets)
+        # exit()
 
 def evaluate(dataloader):
-    model.eval()
-    total_acc, total_count = 0, 0
-
-    with torch.no_grad():
-        print('this is evaluate process')
-        for idx, (label, text, offsets) in enumerate(dataloader):
-            predicted_label = model(text, offsets)
-            loss = criterion(predicted_label, label)
-            total_acc += (predicted_label.argmax(1) == label).sum().item()
-            total_count += label.size()[0]
-    return total_acc / total_count
+    pass
+# model = nlpModel.BasicGRU(2, )
 
 for epoch in range(1, EPOCHS + 1):
     epoch_start_time = time.time()
     train(model, optimizer, dataLoader_train, criterion)
-    accu_val = evaluate(dataLoader_test)
-    if total_accu is not None and total_accu > acc_val:
-        scheduler.step()
-    else:
-        total_accu = accu_val
-    print('-' * 60)
-    print('| end of epoch {:3d} | time: {:5.2f}s | '
-          'valid accuracy {:8.3f} '.format(epoch,
-                                           time.time() - epoch_start_time,
-                                           accu_val))
-    print('-' * 60)
-
-ag_news_label = {
-    0: '인사',
-    1: '감사',
-    2: '사과',
-    3: '위급',
-    4: '날씨'
-}
-
-
-def predict(text, text_pipeline):
-    with torch.no_grad():
-        print(text)
-        print(text_pipeline(text))
-        text = torch.tensor(text_pipeline(text))
-        output = model(text, torch.tensor([0]))
-        print(output)
-        return output.argmax(1).item()
-
-toPredicted = [
-    '어머 이제 오셨어요 들어오세요',
-    '제 죄를 용서하여주세요',
-    '내일 봐요',
-    '내일은 강한 비가 예상됩니다'
-]
-
-model = model.to('cpu')
-
-for text in toPredicted:
-    print(text)
-    print(f"This is a {ag_news_label[predict(text, text_pipeline)]} conversation")
