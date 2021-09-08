@@ -14,7 +14,96 @@ import azure.cognitiveservices.speech as speechsdk
 # gui 클래스
 from stt_team3.train import TextClassification
 
+# gui form 정의
 form_class = uic.loadUiType("main.ui")[0]
+
+# stdout을 gui로 리다이렉트
+class StdoutRedirect(object):
+    def __init__(self, *param):
+        self.daemon = True
+        self.sysstdout = sys.stdout
+        self.redirectout = param[0]
+        sys.stdout.write = self.write
+
+    def __del__(self):
+        sys.stdout = self.sysstdout
+
+    def write(self, s):
+        self.redirectout(s)
+
+class TrainWindow(QWidget):
+    def __init__(self):
+        super(TrainWindow, self).__init__()
+        self.resize(400, 300)
+        layout = QVBoxLayout()
+
+        # data path
+        self.labelPath = QLabel('train & val data path')
+        self.editPath = QTextEdit(os.path.abspath("./augmented"))
+        layout.addWidget(self.labelPath)
+        layout.addWidget(self.editPath)
+
+        # train and val rate
+        self.labelTrainRatio = QLabel('training ratio of data set')
+        self.editTrainRatio = QTextEdit("0.8")
+        layout.addWidget(self.labelTrainRatio)
+        layout.addWidget(self.editTrainRatio)
+
+        # lr
+        self.labelLR = QLabel('learning rate')
+        self.editLR = QTextEdit("4")
+        layout.addWidget(self.labelLR)
+        layout.addWidget(self.editLR)
+
+        # epochs
+        self.labelEpoch = QLabel('epochs')
+        self.editEpoch = QTextEdit("100")
+        layout.addWidget(self.labelEpoch)
+        layout.addWidget(self.editEpoch)
+
+        # Batch
+        self.labelBatch = QLabel('Batch size')
+        self.editBatch = QTextEdit("2")
+        layout.addWidget(self.labelBatch)
+        layout.addWidget(self.editBatch)
+
+        # train start button
+        self.trainStartButton = QPushButton('train start')
+        layout.addWidget(self.trainStartButton)
+        # 학습 중에 프로그램이 멈춘것처럼 보이니까, 스레드로 돌리고
+        # 중간 결과 stdout을 리다이렉트 할 것
+        self.trainStartButton.clicked.connect(self.trainClicked)
+
+        # consol stdout view
+        self.stdoutView = QTextBrowser()
+        layout.addWidget(self.stdoutView)
+        self.stdoutView.setReadOnly(True)
+
+        # set layout
+        self.setLayout(layout)
+
+    def trainClicked(self):
+        self.trainStartButton.setEnabled(False)
+        # stdout을 gui로 리다이렉트 진행
+        # stdout이 발생할 때 마다 실행시킬 함수 전달(update)
+        stdout_thread = StdoutRedirect(self.update)
+        threading.Thread(target=self.train).start()
+
+    def update(self, msg):
+        # stdout 메시지 발생시, 이 함수 호출됨
+        # msg를 view에 추가하고
+        self.stdoutView.insertPlainText(msg)
+        # 스크롤바를 아래로 옮김
+        self.stdoutView.verticalScrollBar().setValue(self.stdoutView.verticalScrollBar().maximum())
+        self.stdoutView.update()
+
+    def train(self):
+        test = TextClassification(batch_size = int(self.editBatch.toPlainText()) , lr = float(self.editLR.toPlainText()),
+                                  epochs = int(self.editEpoch.toPlainText()), train_ratio = float(self.editTrainRatio.toPlainText()))
+        test.makeDatasetAndVoc(dataPath=self.editPath.toPlainText())
+        test.train()
+        self.trainStartButton.setEnabled(True)
+
 class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
@@ -23,12 +112,14 @@ class WindowClass(QMainWindow, form_class) :
         # title name
         self.setWindowTitle("Sound to Text 음성 식별")
 
-        print("preprocessing.. making vocabulary set...")
+        print("-" * 10)
+        print("preprocessing.. making vocabulary set for predict...")
         self.classifier = TextClassification()
         # 사전 만들기 작업 필요(모델을 불러올 때, 학습 데이터셋에서 만들어진 사전 사이즈를 맞춰줘야함)
         # 이 부분을 따로 함수로 빼놨으므로, 클래스 생성 후 사전 만들기 함수 호출
         self.classifier.makeDatasetAndVoc(dataPath="./augmented")
         print("preprocess finished")
+        print("-" * 10)
 
         # 음성 인식 상태
         self.isRecording = False
@@ -36,6 +127,11 @@ class WindowClass(QMainWindow, form_class) :
 
         # type 체크 상태
         self.isType = False
+
+        # train window
+        self.train_window = TrainWindow()
+        self.showTrainWindowButton = self.findChild(QPushButton, "trainWindowButton")
+        self.showTrainWindowButton.clicked.connect(self.train_window.show)
 
         # 로고
         self.logo = self.findChild(QLabel, 'logo')

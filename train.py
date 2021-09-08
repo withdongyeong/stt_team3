@@ -8,12 +8,16 @@ from torchtext.vocab import build_vocab_from_iterator
 import customDataset, nlpModel
 
 class TextClassification():
-    def __init__(self):
+    def __init__(self, batch_size = 2, lr = 4, epochs = 100, train_ratio = 0.8):
         # 하이퍼 파라미터 정의
         # 하이퍼 파라미터
-        self.BATCH_SIZE = 2
-        self.lr = 4
-        self.EPOCHS = 100
+        self.BATCH_SIZE = batch_size
+        self.lr = lr
+        self.EPOCHS = epochs
+
+        # 학습 및 평가 비율
+        self.train_ratio = train_ratio
+
         # 시드 고정
         SEED = 5
         # 랜덤함수 시드
@@ -46,7 +50,9 @@ class TextClassification():
         criterion = torch.nn.CrossEntropyLoss()
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
         best_accu = 0
-
+        print("train start with")
+        print(f'BATCH : {self.BATCH_SIZE}, LR : {self.lr}, EPOCHS : {self.EPOCHS}')
+        print("result will be saved at ./runs")
         for epoch in range(1, self.EPOCHS + 1):
             epoch_start_time = time.time()
             self.train_one_epoch(self.model, optimizer, self.dataLoader_train, criterion)
@@ -59,12 +65,13 @@ class TextClassification():
                 torch.save(self.model.state_dict(), "./runs/best" + "_" + "{:.3f}".format(accu_val) + ".pth")
                 best_accu = accu_val
 
-            print('-' * 59)
-            print('| end of epoch {:3d} | time: {:5.2f}s | '
-                  'valid accuracy {:8.3f} '.format(epoch,
-                                                   time.time() - epoch_start_time,
-                                                   accu_val))
-            print('-' * 59)
+            print('-' * 10)
+            print('end of epoch: {:3d} | time: {:5.2f}s'.format(epoch,
+                                                   time.time() - epoch_start_time))
+            print('valid accuracy: {:8.3f} '.format(accu_val))
+            print('-' * 10)
+        print("training finished")
+        print("best accuracy: {:8.3f}".format(best_accu))
 
     # train_one_epoch 함수 정의
     def train_one_epoch(self, model, optimizer, dataloader, criterion):
@@ -106,10 +113,12 @@ class TextClassification():
     def makeDatasetAndVoc(self, dataPath):
         # 데이터셋을 만들고, 학습 및 테스트 데이터셋으로 분리
         # 데이터셋 만들기
+        print("-" * 10)
+        print("start making dataset and vocabulary with ", dataPath)
         dataset = customDataset.textDataset(dataPath)
 
         # random_split 함수를 통해 dataset을 비율을 맞춰 2개의 Subset으로 분리함
-        num_train = int(len(dataset) * 0.8)
+        num_train = int(len(dataset) * self.train_ratio)
         train_dataset, test_dataset = \
             random_split(dataset, [num_train, len(dataset) - num_train])
 
@@ -157,6 +166,9 @@ class TextClassification():
                                       collate_fn=self.collate_batch)
         self.dataLoader_test = DataLoader(test_dataset, batch_size=self.BATCH_SIZE, shuffle=False,
                                      collate_fn=self.collate_batch)
+
+        print("finished making dataset and vocabulary with ", dataPath)
+        print("-"*10)
 
     # iterable 객체를 전달받아서 토큰화 시키는 생성자
     def yield_token(self, data_iter):
