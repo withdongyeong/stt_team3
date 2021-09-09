@@ -68,7 +68,7 @@ main gui 실행
 ![img.png](imgs/text_administration.png)
 1. python administration.py를 실행한다
 2. 경로를 눌러서 텍스트 파일이 있는 폴더를 지정한다(conversationSet 폴더이다)
-3. 라이오 버튼을 눌러서 어떤 데이터를 불러오는지 지정한다.
+3. 라디오 버튼을 눌러서 어떤 데이터를 불러오는지 지정한다.
 폴더명의 기준으로 파일이 배치되어 있기에 다음을 따른다
     + emergency는 위급
     + greeting은 인사
@@ -83,7 +83,7 @@ main gui 실행
 2. 위의 text 관리 창이 뜨면 창 아래에 텍스트 작성 버튼을 누른다
 3. 그러면 지금의 text 작성 기능을 가진 창이 뜬다
 4. 저장 경로를 conversationSet안의 폴더 중 하나로 설정한다. 
-5. 라이오 버튼을 눌러서 어떤 데이터를 저장하는지 지정한다.
+5. 라디오 버튼을 눌러서 어떤 데이터를 저장하는지 지정한다.
 폴더명의 기준으로 파일이 배치되어 있기에 다음을 따른다
     + emergency는 위급
     + greeting은 인사
