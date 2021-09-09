@@ -79,7 +79,7 @@ class Administration(QMainWindow, form_class):
         if self.greetingRadio.isChecked():
             print('greeting')
             self.messageShow.setRowCount(len(self.greeting_ment))
-            self.showStateLabel.setText(f"인사의 텍스트 갯수는 {len(self.greeting_ment)} 입니다")
+            self.showStateLabel.setText(f"인사의 텍스트 개수는 {len(self.greeting_ment)} 입니다")
 
             for index, (file_name, text) in enumerate(self.greeting_ment.items()):
                 self.messageShow.setItem(index, 0, QTableWidgetItem(file_name))
@@ -88,7 +88,7 @@ class Administration(QMainWindow, form_class):
         elif self.apologizeRadio.isChecked():
             print('sorry')
             self.messageShow.setRowCount(len(self.apologize_ment))
-            self.showStateLabel.setText(f"사과의 텍스트 갯수는 {len(self.apologize_ment)} 입니다")
+            self.showStateLabel.setText(f"사과의 텍스트 개수는 {len(self.apologize_ment)} 입니다")
 
             for index, (file_name, text) in enumerate(self.apologize_ment.items()):
                 self.messageShow.setItem(index, 0, QTableWidgetItem(file_name))
@@ -98,7 +98,7 @@ class Administration(QMainWindow, form_class):
             print('thanks')
 
             self.messageShow.setRowCount(len(self.thanks_ment))
-            self.showStateLabel.setText(f"감사의 텍스트 갯수는 {len(self.thanks_ment)} 입니다")
+            self.showStateLabel.setText(f"감사의 텍스트 개수는 {len(self.thanks_ment)} 입니다")
 
             for index, (file_name, text) in enumerate(self.thanks_ment.items()):
                 self.messageShow.setItem(index, 0, QTableWidgetItem(file_name))
@@ -108,7 +108,7 @@ class Administration(QMainWindow, form_class):
             print('help!!')
 
             self.messageShow.setRowCount(len(self.emergency_ment))
-            self.showStateLabel.setText(f"위급의 텍스트 갯수는 {len(self.emergency_ment)} 입니다")
+            self.showStateLabel.setText(f"위급의 텍스트 개수는 {len(self.emergency_ment)} 입니다")
 
             for index, (file_name, text) in enumerate(self.emergency_ment.items()):
                 self.messageShow.setItem(index, 0, QTableWidgetItem(file_name))
@@ -118,7 +118,7 @@ class Administration(QMainWindow, form_class):
             print('how is the weather?')
 
             self.messageShow.setRowCount(len(self.weather_ment))
-            self.showStateLabel.setText(f"날씨의 텍스트 갯수는 {len(self.weather_ment)} 입니다")
+            self.showStateLabel.setText(f"날씨의 텍스트 개수는 {len(self.weather_ment)} 입니다")
 
             for index, (file_name, text) in enumerate(self.weather_ment.items()):
                 self.messageShow.setItem(index, 0, QTableWidgetItem(file_name))
