@@ -10,10 +10,10 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import azure.cognitiveservices.speech as speechsdk
 
-from stt_team3.train import TextClassification
+from train import TextClassification
 
 # gui form 정의
-from stt_team3.eda import *
+from eda import *
 
 form_class = uic.loadUiType("main.ui")[0]
 

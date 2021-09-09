@@ -4,11 +4,19 @@
 azure-cognitiveservices-speech
 
 # PyQt5
-pyQt5
-pyQt5-tools
+PyQt5
+PyQt5-tools
 
-# JPype
-JPype==0.7
+# 자기버전에 맞게 설치해야함
+# 윈도우기준
+# https://pytorch.org/ 참고
+torch==1.9.0+cu102 torchvision==0.10.0+cu102 torchaudio===0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+
+# konlpy
+konlpy
+
+# torchtext
+torchtext
 
 # chardet
 chardet

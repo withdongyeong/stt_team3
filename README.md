@@ -15,19 +15,39 @@ Sound to Text 자연어 처리 프로젝트
 변환된 텍스트를 [인사, 사과, 감사, 위급, 날씨] 총 5개의 클래스로 분류하여 식별
 
 # 2. 요구사항
-    pip install -r requirements.txt
+음성 식별에 애저 STT, 한글 토크나이저로 konlpy를 사용
+1. pip install로 설치가능한 부분은 requirements.txt에 들어있어서pip install -r requirements.txt
 
-음성 식별에 애저 STT
+       pip install -r requirements.txt
+2. requirements.txt에 들어있는 pytorch의 경우, 윈도우 64bit 기준이고 자신의 환경에 맞게 하려면
+   
+https://pytorch.org/
+에서 
+![img.png](imgs/pytorch.png)
+를 참고한다
+   
+3. konlpy를 사용하기 위하여 jdk를 설치하고 환경 변수를 설정해야한다
 
-한글 토크나이저로 konlpy를 사용
+openjdk 설치 : https://openjdk.java.net/install/
+환경변수 설정법 : https://blog.naver.com/PostView.nhn?blogId=alcmskfl17&logNo=221870079271   
 
-konlpy를 사용하기 위해 jdk 설치 및 환경 설정,
+4. pip install로 설치할 수 없는 PyAudio, JPype는 installData 폴더에 설치용 .whl 파일이 들어있다
 
-jpype 설치가 필요하며
+특이사항으로 호환성 문제가 있어 jpype의 버전을 최신 버전이 아니라
+<=1.2 버전을 사용해야한다
 
-특이사항으로 호환성 문제가 있어 jpype의 버전을 최신 버전이 아니라 0.7로
+예를 들어 자신의 파이썬 버전이 3.8이라면 cp38 파일을 설치하면 된다
 
-다운그레이드하여 사용
+윈도우 64bit 외의 경우에는 아래 링크에서 직접 다운로드하도록 하고
+
+Jpype : https://www.lfd.uci.edu/~gohlke/pythonlibs/#jpype
+
+PyAudio : https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
+
+      pip install <.whl파일 경로>
+와 같은 명령어를 사용하여 설치한다
+
+
 
 # 3. 사용방법
 ![img.png](imgs/main.png)
