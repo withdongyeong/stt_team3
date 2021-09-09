@@ -9,10 +9,6 @@ class TextClassificationModel(nn.Module):
         self.fc2 = nn.Linear(128, 256)
         self.fc3 = nn.Linear(256, 8)
         self.fc4 = nn.Linear(8, num_class)
-        self.dropout = nn.Dropout(0.2)
-        self.batch = nn.BatchNorm1d(256)
-        self.sig = nn.Sigmoid()
-        self.soft = nn.Softmax(1)
         self.init_weights()
 
     def init_weights(self):
@@ -25,10 +21,6 @@ class TextClassificationModel(nn.Module):
         embedded = self.embedding(text, offsets)
         x = self.fc(embedded)
         x = self.fc2(x)
-        # x = self.dropout(x)
-        # x = self.batch(x)
         x = self.fc3(x)
         x = self.fc4(x)
-        # x = self.sig(x)
-        # x = self.soft(x)
         return x
