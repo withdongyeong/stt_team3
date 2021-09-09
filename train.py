@@ -40,7 +40,7 @@ class TextClassification():
         }
 
     # train 함수 정의
-    def train(self):
+    def train(self, savePath):
         n_classes = 5
         vocab_size = len(self.vocab)
         embeding_size = 64
@@ -60,9 +60,9 @@ class TextClassification():
             if best_accu < accu_val:
                 scheduler.step()
                 # save results, after 2 epochs
-                if not os.path.isdir("./runs"):
-                    os.makedirs("runs")
-                torch.save(self.model.state_dict(), "./runs/best" + "_" + "{:.3f}".format(accu_val) + ".pth")
+                if not os.path.isdir(savePath + "/runs"):
+                    os.makedirs(savePath + "/runs")
+                torch.save(self.model.state_dict(), savePath + "/runs/best" + "_" + "{:.3f}".format(accu_val) + ".pth")
                 best_accu = accu_val
 
             print('-' * 10)

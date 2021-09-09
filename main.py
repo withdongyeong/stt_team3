@@ -34,9 +34,9 @@ class StdoutRedirect(object):
 class TrainWindow(QWidget):
     def __init__(self):
         super(TrainWindow, self).__init__()
-        self.resize(400, 300)
+        self.resize(400, 800)
+        mainLayout = QHBoxLayout()
         layout = QVBoxLayout()
-
         # data path
         self.labelPath = QLabel('train & val data path')
         self.editPath = QTextEdit(os.path.abspath("./augmented"))
@@ -47,6 +47,17 @@ class TrainWindow(QWidget):
         self.dataPathBrowse = QPushButton("browse")
         self.dataPathBrowse.clicked.connect(self.browse)
         layout.addWidget(self.dataPathBrowse)
+
+        # save data path
+        self.labelSavePath = QLabel('save pth path(path/runs)')
+        self.editSavePath = QTextEdit(os.path.abspath("./"))
+        layout.addWidget(self.labelSavePath)
+        layout.addWidget(self.editSavePath)
+
+        # save path browse button
+        self.savePathBrowse = QPushButton("browse")
+        self.savePathBrowse.clicked.connect(self.saveBrowse)
+        layout.addWidget(self.savePathBrowse)
 
         # train and val rate
         self.labelTrainRatio = QLabel('training ratio of data set')
@@ -81,11 +92,16 @@ class TrainWindow(QWidget):
 
         # consol stdout view
         self.stdoutView = QTextBrowser()
-        layout.addWidget(self.stdoutView)
         self.stdoutView.setReadOnly(True)
 
         # set layout
-        self.setLayout(layout)
+        mainLayout.addLayout(layout)
+        mainLayout.addWidget(self.stdoutView)
+        self.setLayout(mainLayout)
+
+    def saveBrowse(self):
+        data_path = QFileDialog.getExistingDirectory(self, "save path", "./")
+        self.editSavePath.setText(data_path)
 
     def browse(self):
         data_path = QFileDialog.getExistingDirectory(self, "data path", "./")
@@ -110,7 +126,7 @@ class TrainWindow(QWidget):
         test = TextClassification(batch_size = int(self.editBatch.toPlainText()) , lr = float(self.editLR.toPlainText()),
                                   epochs = int(self.editEpoch.toPlainText()), train_ratio = float(self.editTrainRatio.toPlainText()))
         test.makeDatasetAndVoc(dataPath=self.editPath.toPlainText())
-        test.train()
+        test.train(self.editSavePath.toPlainText())
         self.trainStartButton.setEnabled(True)
 
 class AugmentWindow(QWidget):
