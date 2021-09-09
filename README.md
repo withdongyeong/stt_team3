@@ -52,7 +52,7 @@ PyAudio : https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
       pip install <.whl파일 경로>
 와 같은 명령어를 사용하여 설치한다
 
-
+참고 : https://catsirup.github.io/ai/2020/04/21/nlp_data_argumentation.html (eda 기반 한글 text augmentation)
 
 # 3. 사용방법
 ![img.png](imgs/main.png)
