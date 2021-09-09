@@ -32,6 +32,8 @@ jpype 설치가 필요하며
 # 3. 사용방법
 ![img.png](imgs/main.png)
 
+    python main.py
+main gui 실행
 ### 1. 음성 입력 및 예측하기
 1. SubKey = 애저 STT subscriptionkey 입력
 2. WeightPath = 예측에 사용할 pth 파일 경로를 browse로 입력
