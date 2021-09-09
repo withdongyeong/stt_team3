@@ -1,20 +1,20 @@
 #-* coding:utf-8 -*-
+import glob
 import os.path
 import sys
 import threading
 import wave
 
 import pyaudio
-from PyQt5.QtCore import QRect
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import azure.cognitiveservices.speech as speechsdk
 
-# gui 클래스
 from stt_team3.train import TextClassification
 
 # gui form 정의
+from stt_team3.eda import *
+
 form_class = uic.loadUiType("main.ui")[0]
 
 # stdout을 gui로 리다이렉트
@@ -42,6 +42,11 @@ class TrainWindow(QWidget):
         self.editPath = QTextEdit(os.path.abspath("./augmented"))
         layout.addWidget(self.labelPath)
         layout.addWidget(self.editPath)
+
+        # data path browse button
+        self.dataPathBrowse = QPushButton("browse")
+        self.dataPathBrowse.clicked.connect(self.browse)
+        layout.addWidget(self.dataPathBrowse)
 
         # train and val rate
         self.labelTrainRatio = QLabel('training ratio of data set')
@@ -82,6 +87,10 @@ class TrainWindow(QWidget):
         # set layout
         self.setLayout(layout)
 
+    def browse(self):
+        data_path = QFileDialog.getExistingDirectory(self, "data path", "./")
+        self.editPath.setText(data_path)
+
     def trainClicked(self):
         self.trainStartButton.setEnabled(False)
         # stdout을 gui로 리다이렉트 진행
@@ -103,6 +112,110 @@ class TrainWindow(QWidget):
         test.makeDatasetAndVoc(dataPath=self.editPath.toPlainText())
         test.train()
         self.trainStartButton.setEnabled(True)
+
+class AugmentWindow(QWidget):
+    def __init__(self):
+        super(AugmentWindow, self).__init__()
+        self.resize(400, 300)
+        layout = QVBoxLayout()
+
+        # targetPath
+        self.labelTarget = QLabel('Target')
+        self.editTarget = QTextEdit("")
+        layout.addWidget(self.labelTarget)
+        layout.addWidget(self.editTarget)
+
+        # targetPath browse
+        self.targetPathBrowse = QPushButton("browse")
+        self.targetPathBrowse.clicked.connect(self.browse)
+        layout.addWidget(self.targetPathBrowse)
+
+        # train start button
+        self.augmentStartButton = QPushButton('augment start')
+        layout.addWidget(self.augmentStartButton)
+        # 학습 중에 프로그램이 멈춘것처럼 보이니까, 스레드로 돌리고
+        # 중간 결과 stdout을 리다이렉트 할 것
+        self.augmentStartButton.clicked.connect(self.augmentClicked)
+
+        # consol stdout view
+        self.stdoutView = QTextBrowser()
+        layout.addWidget(self.stdoutView)
+        self.stdoutView.setReadOnly(True)
+
+        # set layout
+        self.setLayout(layout)
+
+    def browse(self):
+        data_path = QFileDialog.getExistingDirectory(self, "data path", "./")
+        self.editTarget.setText(data_path)
+
+    def augmentClicked(self):
+        self.augmentStartButton.setEnabled(False)
+        # stdout을 gui로 리다이렉트 진행
+        # stdout이 발생할 때 마다 실행시킬 함수 전달(update)
+        stdout_thread = StdoutRedirect(self.update)
+        threading.Thread(target=self.work).start()
+
+    def update(self, msg):
+        # stdout 메시지 발생시, 이 함수 호출됨
+        # msg를 view에 추가하고
+        self.stdoutView.insertPlainText(msg)
+        # 스크롤바를 아래로 옮김
+        self.stdoutView.verticalScrollBar().setValue(self.stdoutView.verticalScrollBar().maximum())
+        self.stdoutView.update()
+
+    def work(self):
+        # 데이터 셋 가져오기
+        origin_path = self.editTarget.toPlainText()
+        # text 가져오기
+        all_data = sorted(glob.glob(os.path.join(origin_path, "*.txt")))
+
+        # make target dir
+        if not os.path.isdir(origin_path + "/augmented"):
+            os.mkdir(origin_path + "/augmented")
+        target_path = origin_path + "/augmented"
+
+        # 각 텍스트 데이터에 대해서
+        count = 0
+        for item in all_data:
+            text = ""
+            f = open(item, 'r', encoding='UTF-8')
+            # 첫번째 줄은 label
+            # strip() 함수는 문자열의 선행, 후행 개행 문자를 모두 제거
+            label = f.readline().strip()
+            # 두번째 줄 부터는 텍스트에 저장
+            while True:
+                line = f.readline()
+                if not line: break
+                text += line
+            f.close()
+            # text augmentation 진행
+            data = self.augmentation(text)
+            # augmented list
+            for i, augmentedText in enumerate(data):
+                index = i + 1
+                path = os.path.abspath(item)
+                baseName = os.path.basename(path)
+                fname = target_path + os.path.sep + baseName + "_" + "aug" + str(index).zfill(5) + ".txt"
+                f = open(fname, 'w', encoding='UTF-8')
+                f.write(label + '\n')
+                f.write(augmentedText)
+                count+=1
+            f.close()
+        self.augmentStartButton.setEnabled(True)
+        print("num of origns : ", len(all_data))
+        print("augmentation finished, results : ", count)
+        print("saved at :", target_path)
+
+    def augmentation(self, text):
+        # sr = 동의어 교체
+        # ri = 임의 삽입
+        # rs = 임의 스왑
+        # rd = 임의 삭제
+        # rs, rd만 사용하도록 변경해놓았음
+        data = EDA(text, alpha_sr=0.05, alpha_ri=0.05, alpha_rs=0.05, p_rd=0.05, num_aug=16)
+        data = set(data)
+        return data
 
 class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
@@ -132,6 +245,11 @@ class WindowClass(QMainWindow, form_class) :
         self.train_window = TrainWindow()
         self.showTrainWindowButton = self.findChild(QPushButton, "trainWindowButton")
         self.showTrainWindowButton.clicked.connect(self.train_window.show)
+
+        # augment window
+        self.augment_window = AugmentWindow()
+        self.augment_windowButton = self.findChild(QPushButton, "augmentButton")
+        self.augment_windowButton.clicked.connect(self.augment_window.show)
 
         # 로고
         self.logo = self.findChild(QLabel, 'logo')
