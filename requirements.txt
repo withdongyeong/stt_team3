@@ -7,5 +7,8 @@ azure-cognitiveservices-speech
 pyQt5
 pyQt5-tools
 
+# JPype
+JPype==0.7
+
 
 
