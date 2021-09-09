@@ -10,5 +10,8 @@ pyQt5-tools
 # JPype
 JPype==0.7
 
+# chardet
+chardet
+
 
 

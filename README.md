@@ -63,3 +63,33 @@ main gui 실행
 ![img.png](imgs/augmentation.png)
 1. 타겟 데이터 폴더 경로 입력
 2. agument start 버튼 클릭
+
+### administration.py를 이용한 text 관리기능
+![img.png](imgs/text_administration.png)
+1. python administration.py를 실행한다
+2. 경로를 눌러서 텍스트 파일이 있는 폴더를 지정한다(conversationSet 폴더이다)
+3. 라이오 버튼을 눌러서 어떤 데이터를 불러오는지 지정한다.
+폴더명의 기준으로 파일이 배치되어 있기에 다음을 따른다
+    + emergency는 위급
+    + greeting은 인사
+    + sorry는 사과
+    + thanks는 감사
+    + weather는 날씨
+4. 확인을 눌러 그 폴더의 텍스트 파일명과 그 내용을 확인 할 수 있다.
+
+### administration.py를 이용한 text 작성기능
+![img.png](imgs/text_editor.PNG)
+1. python administration.py를 실행한다
+2. 위의 text 관리 창이 뜨면 창 아래에 텍스트 작성 버튼을 누른다
+3. 그러면 지금의 text 작성 기능을 가진 창이 뜬다
+4. 저장 경로를 conversationSet안의 폴더 중 하나로 설정한다. 
+5. 라이오 버튼을 눌러서 어떤 데이터를 불러오는지 지정한다.
+폴더명의 기준으로 파일이 배치되어 있기에 다음을 따른다
+    + emergency는 위급
+    + greeting은 인사
+    + sorry는 사과
+    + thanks는 감사
+    + weather는 날씨
+6. 그리고 그 아래의 입력란에 텍스트를 입력하고 저장하기 버튼을 누르거나 ctrl + s를 눌러 저장한다
+7. 관리창으로 가려면 취소 돌아가기를 누른다.
+8. 내가 쓴 텍스트 결과를 보려면 그 안에 관리 창으로 돌아가 다시 경로를 설정하고 라디오 버튼을 누른 뒤에 확인을 누른다
