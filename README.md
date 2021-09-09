@@ -19,7 +19,12 @@ Sound to Text 자연어 처리 프로젝트
 1. pip install로 설치가능한 부분은 requirements.txt에 들어있어서pip install -r requirements.txt
 
        pip install -r requirements.txt
-2. requirements.txt에 들어있는 pytorch의 경우, 윈도우 64bit 기준이고 자신의 환경에 맞게 하려면
+2. pytorch 설치
+
+자기 환경에 맞게 설치해야하는데,
+윈도우기준
+
+      pip3 install torch==1.9.0+cu102 torchvision==0.10.0+cu102 torchaudio===0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
    
 https://pytorch.org/
 에서 
