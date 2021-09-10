@@ -271,7 +271,7 @@ class WindowClass(QMainWindow, form_class) :
         self.logo = self.findChild(QLabel, 'logo')
 
         # 작업 경로(weight 파일 위치 입력)
-        self.data_root = "./sample_0.941.pth"
+        self.data_root = ""
 
         # 수동 데이터 저장 경로
         self.save_text = self.findChild(QTextEdit, 'saveTextPath')
@@ -308,6 +308,7 @@ class WindowClass(QMainWindow, form_class) :
         # okButton
         self.okButton = self.findChild(QPushButton, 'okButton')
         self.okButton.clicked.connect(self.ok)
+        self.okButton.setEnabled(False)
 
         # soundToTextView
         self.soundToTextView = self.findChild(QTextEdit, 'soundToTextView')
@@ -319,7 +320,7 @@ class WindowClass(QMainWindow, form_class) :
 
         # weight path label
         self.browseEdit = self.findChild(QTextEdit, 'browseEdit')
-        self.browseEdit.setText(os.path.abspath(self.data_root))
+        self.browseEdit.setText("please set weight pth path")
 
         # 인사 라디오 버튼
         self.greetingRadioButton = self.findChild(QRadioButton, 'greetingRadioButton')
@@ -506,6 +507,7 @@ class WindowClass(QMainWindow, form_class) :
         filename = QFileDialog.getOpenFileName(self, 'load pth', path, filter)
         self.data_root = str(filename).split("'")[1]
         self.browseEdit.setText(self.data_root)
+        self.okButton.setEnabled(True)
 
     # save 버튼 액션
     def save(self):
