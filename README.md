@@ -54,6 +54,10 @@ PyAudio : https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 
 참고 : https://catsirup.github.io/ai/2020/04/21/nlp_data_argumentation.html (eda 기반 한글 text augmentation)
 
+5. tweepy가 9.27기준 현재 4.0으로 업데이트되었는데, 다른 모듈이 이 버전에 대응하지 못 하기 때문에 다운그레이드해야한다
+
+       pip install tweepy==3.7
+
 # 3. 사용방법
 ![img.png](imgs/main.png)
 
